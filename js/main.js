@@ -1,5 +1,6 @@
 // Global variable
 var dsnv = new DanhSachNhanVien();
+var isValid = new Validation();
 
 function getELE(id) {
     return document.getElementById(id);
@@ -19,6 +20,60 @@ function getLocalStorage() {
 }
 getLocalStorage();
 
+// Reset form when click Add button
+function formDefault() {
+    getELE('myForm').reset();
+    getELE('tknv').disabled = false;
+    getELE("btnCapNhat").style.display = "none";
+}
+
+// Hide Error
+function hideError() {
+    var arrClass = document.querySelectorAll(".err_noti");
+
+    arrClass.forEach((err_noti) => {
+        err_noti.style.display = "none";
+    });
+}
+
+// Validation function
+function checkAllInput(taiKhoanNV, hoTenNV, email, matKhau, ngayLam, luongCoBan, chucVu, gioLam) {
+
+    /** --------- Validation --------- */
+    var status = true;
+
+    // Tài khoản
+    if (!getELE("tknv").disabled) {
+        status &= isValid.isEmpty(taiKhoanNV, "tbTKNV", "Tài khoản không được để trống !") && isValid.lengthOfId(taiKhoanNV, "tbTKNV", "Tài khoản tối đa 4-6 ký số !") && isValid.isDuplicate(taiKhoanNV, "tbTKNV", "Tài khoản không được trùng !", dsnv.mangNV);
+    }
+
+    // Họ và tên
+    status &= isValid.isEmpty(hoTenNV, "tbTen", "Họ và tên không được để trống !") && isValid.formatOfName(hoTenNV, "tbTen", "Họ tên nhân viên phải là chữ !");
+
+    // Email
+    status &= isValid.isEmpty(email, "tbEmail", "Email không được để trống !") && isValid.isEmail(email, "tbEmail", "Email phải đúng định dạng !");
+
+    // Password
+    status &= isValid.formatOfPass(matKhau, "tbMatKhau", "Mật khẩu phải chứa ít nhất 1 ký tự số, 1 ký tự in hoa, 1 ký tự đặc biệt và từ 6-10 ký tự !");
+
+    // Date
+    status &= isValid.isEmpty(ngayLam, "tbNgay", "Ngày không được để trống !");
+
+    // Salary
+    status &= isValid.isEmpty(luongCoBan, "tbLuongCB", "Lương không được để trống !") && isValid.lengthOfSalary(luongCoBan, "tbLuongCB");
+
+    // Role
+    status &= isValid.isSelected("chucvu", "tbChucVu", "Hãy chọn chức vụ !");
+
+    // Work time
+    status &= isValid.isEmpty(gioLam, "tbGiolam", "Giờ làm không được để trống !") && isValid.timeForWork(gioLam, "tbGiolam");
+
+    /** --------- End Validation --------- */
+
+    return status;
+
+}
+
 // Thêm nhân viên
 function themNhanVien() {
     var taiKhoanNV = getELE('tknv').value;
@@ -26,20 +81,27 @@ function themNhanVien() {
     var email = getELE('email').value;
     var matKhau = getELE('password').value;
     var ngayLam = getELE('datepicker').value;
-    var luongCoBan = Number(getELE('luongCB').value);
+    var luongCoBan = getELE('luongCB').value;
     var chucVu = getELE('chucvu').value;
-    var gioLam = Number(getELE('gioLam').value);
+    var gioLam = getELE('gioLam').value;
 
-    // Tạo thể hiện của NhanVien
-    var nv = new NhanVien(taiKhoanNV, hoTenNV, email, matKhau, ngayLam, luongCoBan, chucVu, gioLam);
-    nv.tinhTongLuong();
-    nv.xeploaiNhanVien();
+    var callValidation = checkAllInput(taiKhoanNV, hoTenNV, email, matKhau, ngayLam, luongCoBan, chucVu, gioLam);
 
-    dsnv.themNhanVien(nv);
-    hienThiDS(dsnv.mangNV);
-    setLocalStorage();
+    if (callValidation) {
 
-    getELE('myForm').reset();
+        alert('Thêm mới nhân viên thành công !');
+
+        // Tạo thể hiện của NhanVien
+        var nv = new NhanVien(taiKhoanNV, hoTenNV, email, matKhau, ngayLam, Number(luongCoBan), chucVu, Number(gioLam));
+        nv.tinhTongLuong();
+        nv.xeploaiNhanVien();
+
+        dsnv.themNhanVien(nv);
+        hienThiDS(dsnv.mangNV);
+        setLocalStorage();
+
+        location.reload();
+    }
 }
 
 
@@ -68,6 +130,7 @@ function hienThiDS(mangNV) {
     getELE('tableDanhSach').innerHTML = content;
 }
 
+
 // Xóa nhân viên
 function xoaNhanVien(tk) {
     dsnv.xoaNhanVien(tk);
@@ -75,8 +138,12 @@ function xoaNhanVien(tk) {
     setLocalStorage(dsnv.mangNV);
 }
 
+
 // Xem chi tiết nhân viên
 function xemChiTiet(tk) {
+    getELE("btnCapNhat").style.display = "block";
+    hideError();
+
     var viTri = dsnv.timViTri(tk);
     if (viTri > -1) {
         var nvTim = dsnv.mangNV[viTri];
@@ -92,22 +159,33 @@ function xemChiTiet(tk) {
     }
 }
 
+
 // Cập nhật nhân viên
 function capNhatNhanVien() {
-        var taiKhoanNV = getELE('tknv').value;
-        var hoTenNV = getELE('name').value;
-        var email = getELE('email').value;
-        var matKhau = getELE('password').value;
-        var ngayLam = getELE('datepicker').value;
-        var luongCoBan = Number(getELE('luongCB').value);
-        var chucVu = getELE('chucvu').value;
-        var gioLam = Number(getELE('gioLam').value);
+    var taiKhoanNV = getELE('tknv').value;
+    var hoTenNV = getELE('name').value;
+    var email = getELE('email').value;
+    var matKhau = getELE('password').value;
+    var ngayLam = getELE('datepicker').value;
+    var luongCoBan = getELE('luongCB').value;
+    var chucVu = getELE('chucvu').value;
+    var gioLam = getELE('gioLam').value;
 
-        var nv = new NhanVien(taiKhoanNV, hoTenNV, email, matKhau, ngayLam, luongCoBan, chucVu, gioLam);
+    var callValidation = checkAllInput(taiKhoanNV, hoTenNV, email, matKhau, ngayLam, luongCoBan, chucVu, gioLam);
+
+    if (callValidation) {
+        alert("Cập nhật thành công !");
+
+        var nv = new NhanVien(taiKhoanNV, hoTenNV, email, matKhau, ngayLam, Number(luongCoBan), chucVu, Number(gioLam));
         nv.tinhTongLuong();
         nv.xeploaiNhanVien();
 
         dsnv.capNhatNhanVien(nv);
         hienThiDS(dsnv.mangNV);
         setLocalStorage();
+
+        location.reload();
+    }
+
+
 }

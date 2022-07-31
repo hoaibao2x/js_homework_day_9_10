@@ -19,8 +19,6 @@ function NhanVien(taiKhoan, hoTen, email, password, ngayLam, luongCoBan, chucVu,
             this.tongLuong = this.luongCoBan * 2;
         } else if (this.chucVu == 'nhanVien') {
             this.tongLuong = this.luongCoBan;
-        } else {
-            alert('Chưa chọn chức vụ !');
         }
     }
     this.xeploaiNhanVien = function() {
