@@ -25,6 +25,8 @@ function formDefault() {
     getELE('myForm').reset();
     getELE('tknv').disabled = false;
     getELE("btnCapNhat").style.display = "none";
+    getELE("btnThemNV").style.display = "block";
+
 }
 
 // Hide Error
@@ -57,7 +59,7 @@ function checkAllInput(taiKhoanNV, hoTenNV, email, matKhau, ngayLam, luongCoBan,
     status &= isValid.formatOfPass(matKhau, "tbMatKhau", "Mật khẩu phải chứa ít nhất 1 ký tự số, 1 ký tự in hoa, 1 ký tự đặc biệt và từ 6-10 ký tự !");
 
     // Date
-    status &= isValid.isEmpty(ngayLam, "tbNgay", "Ngày không được để trống !");
+    status &= isValid.isEmpty(ngayLam, "tbNgay", "Ngày không được để trống !") && isValid.isDate(ngayLam, "tbNgay", "Ngày phải đúng định dạng !");
 
     // Salary
     status &= isValid.isEmpty(luongCoBan, "tbLuongCB", "Lương không được để trống !") && isValid.lengthOfSalary(luongCoBan, "tbLuongCB");
@@ -76,6 +78,9 @@ function checkAllInput(taiKhoanNV, hoTenNV, email, matKhau, ngayLam, luongCoBan,
 
 // Thêm nhân viên
 function themNhanVien() {
+    getELE("btnThemNV").style.display = "block";
+
+
     var taiKhoanNV = getELE('tknv').value;
     var hoTenNV = getELE('name').value;
     var email = getELE('email').value;
@@ -141,6 +146,7 @@ function xoaNhanVien(tk) {
 
 // Xem chi tiết nhân viên
 function xemChiTiet(tk) {
+    getELE("btnThemNV").style.display = "none";
     getELE("btnCapNhat").style.display = "block";
     hideError();
 

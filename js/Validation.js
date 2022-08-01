@@ -50,7 +50,7 @@ function Validation() {
 
         return false;
     }
-    // Format of name input check
+    // name format check
     this.formatOfName = function (inputVal, spanID, message) {
         var pattern = /^[a-z A-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹý\\s]+$/
 
@@ -82,7 +82,7 @@ function Validation() {
 
         return false;
     }
-    // Format password check
+    // Password format check
     this.formatOfPass = function (inputVal, spanID, message) {
         var pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{6,10}$/
 
@@ -127,7 +127,7 @@ function Validation() {
 
         return true;
     }
-    // Format of working time check
+    // Working time format check
     this.timeForWork = function (inputVal, spanID) {
 
         var pattern = /^[0-9]+$/
@@ -178,5 +178,21 @@ function Validation() {
         getELE(spanID).style.display = "none";
 
         return true;
+    }
+    // Date format check
+    this.isDate = function (inputVal, spanID, message) {
+        var pattern = /^(0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])[\/\-]\d{4}$/
+
+        if (inputVal.match(pattern)) {
+            getELE(spanID).innerHTML = "";
+            getELE(spanID).style.display = "none";
+
+            return true;
+        }
+
+        getELE(spanID).innerHTML = message;
+        getELE(spanID).style.display = "block";
+
+        return false;
     }
 }
