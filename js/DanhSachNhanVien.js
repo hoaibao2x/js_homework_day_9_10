@@ -36,3 +36,17 @@ function DanhSachNhanVien() {
         }
     }
 }
+
+DanhSachNhanVien.prototype.timKiemTheoLoai = function (loaiNV) {
+    var mangTimKiem = [];
+
+    this.mangNV.map(function (nv) {
+        var viTriTimKiem = nv.xepLoai.toLowerCase().indexOf(loaiNV.toLowerCase());
+
+        if (viTriTimKiem > -1) {
+            mangTimKiem.push(nv);
+        }
+    });
+
+    return mangTimKiem;
+}

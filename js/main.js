@@ -192,6 +192,15 @@ function capNhatNhanVien() {
 
         location.reload();
     }
-
-
 }
+
+
+// Tìm kiếm nhân viên theo xếp loại nhân viên
+function locTheoLoai() {
+    var tuKhoa = getELE("searchName").value;
+    var mangKetQua = dsnv.timKiemTheoLoai(tuKhoa.replaceAll(" ",""));
+
+    hienThiDS(mangKetQua);
+}
+getELE("btnTimNV").onclick = locTheoLoai;
+getELE("searchName").onkeyup = locTheoLoai;
